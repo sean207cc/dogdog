@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>iOS優化版-愛心煙火</title>
+    <title>極簡版-愛心煙火</title>
     <style>
         /* ----- CSS 樣式 ----- */
         html, body {
@@ -14,11 +14,11 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #050505;
+            background-color: #050505; /* 深色背景 */
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             user-select: none;
-            -webkit-user-select: none; /* iOS 禁止選取文字 */
-            touch-action: none; /* 關鍵：禁止瀏覽器預設的滑動/縮放行為 */
+            -webkit-user-select: none;
+            touch-action: none; /* 禁止手機預設滑動行為 */
         }
 
         #canvas-container {
@@ -28,147 +28,16 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            /* iOS 特有的點擊高亮消除 */
-            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent; /* 移除點擊高亮 */
         }
 
-        /* UI 面板 - 手機版優化 */
-        #ui-panel {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            /* 支援 iPhone 瀏海與底部橫條 */
-            top: max(20px, env(safe-area-inset-top));
-            left: max(20px, env(safe-area-inset-left));
-            
-            background: rgba(30, 30, 30, 0.75); /*稍微透明一點*/
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px); /* Safari 支援 */
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 180px; /* 手機上窄一點 */
-            z-index: 100;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-            pointer-events: auto;
-        }
-
-        .ui-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .ui-label {
-            font-size: 12px;
-            font-weight: 600;
-            opacity: 0.9;
-            color: #ff8fa3;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .ui-hint {
-            font-size: 11px;
-            color: #ccc;
-            margin-bottom: 5px;
-            line-height: 1.4;
-            background: rgba(255,255,255,0.05);
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        /* 顏色選擇器 */
-        .color-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .color-label { font-size: 12px; opacity: 0.7; }
-        
-        input[type="color"] {
-            -webkit-appearance: none;
-            border: none;
-            width: 50px;
-            height: 30px;
-            border-radius: 4px;
-            padding: 0;
-            background: transparent;
-        }
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch {
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 4px;
-        }
-
-        /* 按鈕樣式 */
-        .action-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 13px;
-            text-align: center;
-            /* 增加觸控區域 */
-            min-height: 40px; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #music-btn.playing {
-            background: rgba(0, 255, 128, 0.2);
-            border-color: rgba(0, 255, 128, 0.5);
-            color: #00ff80;
-        }
-
-        /* iOS 上隱藏全螢幕按鈕，因為 Safari 不支援 API */
-        #fullscreen-btn {
-            display: none; 
-        }
-
+        /* UI 面板已完全移除 */
     </style>
 </head>
 <body>
 
     <div id="canvas-container"></div>
-
-    <div id="ui-panel">
-        
-        <div class="ui-group">
-            <span class="ui-label">互動指南</span>
-            <div class="ui-hint">
-                👆 <b>點擊螢幕</b>：播放音樂並炸開<br>
-                ⟳ <b>自動旋轉</b>：直立愛心<br>
-                ⏳ <b>自動還原</b>：5 秒後隱藏訊息
-            </div>
-        </div>
-
-        <div class="ui-group">
-            <span class="ui-label">背景音樂</span>
-            <div id="music-btn" class="action-btn">
-                <span>🎵</span> <span id="music-text">點擊螢幕播放</span>
-            </div>
-        </div>
-
-        <div class="ui-group">
-            <span class="ui-label">漸層配色</span>
-            <div class="color-row">
-                <span class="color-label">底部</span>
-                <input type="color" id="color-bottom" value="#4400ff">
-            </div>
-            <div class="color-row">
-                <span class="color-label">頂部</span>
-                <input type="color" id="color-top" value="#ff0055">
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -180,11 +49,13 @@
         let heartGroup;
         let textSprite = null;
         
-        const HIDDEN_MESSAGE = "Will You Marry Me?";
+        // ★ 在這裡修改你的驚喜文字 ★
+        const HIDDEN_MESSAGE = "給天下第一好的小白";
 
-        const PARTICLE_COUNT = 15000; // iOS 稍微降低一點點粒子數保證流暢
-        const PARTICLE_SIZE = 0.2; // 手機螢幕小，粒子稍微大一點點才清楚
+        const PARTICLE_COUNT = 15000; 
+        const PARTICLE_SIZE = 0.2; 
         
+        // 預設顏色
         let colorBottom = new THREE.Color("#4400ff");
         let colorTop = new THREE.Color("#ff0055");
 
@@ -203,7 +74,6 @@
 
         // 音樂變數
         let bgMusic = null;
-        let isMusicPlaying = false;
         let hasUserInteracted = false; 
 
         // --- Three.js 初始化 ---
@@ -215,20 +85,18 @@
             scene.fog = new THREE.FogExp2(0x050505, 0.02);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-            camera.position.z = 45; // 手機直向螢幕較窄，鏡頭再拉遠一點
+            camera.position.z = 45; 
             camera.position.y = 0; 
 
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            
-            // ★ iOS 關鍵優化：限制 PixelRatio 最大為 2，避免 Retina 螢幕過熱 ★
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             
             container.appendChild(renderer.domElement);
             
-            // ★ iOS 關鍵：使用 touchstart 作為主要觸發，反應比 click 快 ★
+            // 綁定互動事件 (觸控與點擊)
             renderer.domElement.addEventListener('touchstart', onCanvasTouchStart, { passive: false });
-            renderer.domElement.addEventListener('click', onCanvasTouchStart); // 保留 click 以防萬一
+            renderer.domElement.addEventListener('click', onCanvasTouchStart);
 
             heartGroup = new THREE.Group();
             scene.add(heartGroup);
@@ -272,76 +140,29 @@
             calculateHeartShape();
             updateParticleColors();
             updateText(HIDDEN_MESSAGE);
-            initMusic();
+            
+            // 初始化音樂 (不綁定按鈕，只等待第一次點擊)
+            bgMusic = new Audio('music.mp3'); 
+            bgMusic.loop = true; 
+            bgMusic.volume = 0.5; 
+            bgMusic.load(); // iOS 預載入
 
-            // 事件監聽 (包含觸控)
+            // 事件監聽
             window.addEventListener('resize', onWindowResize, false);
             document.addEventListener('mousemove', onMouseMove, false);
-            // ★ iOS 關鍵：監聽手指移動 ★
             document.addEventListener('touchmove', onTouchMove, { passive: false });
             
             animate();
         }
 
-        // --- 音樂初始化 ---
-        function initMusic() {
-            bgMusic = new Audio('music.mp3'); 
-            bgMusic.loop = true; 
-            bgMusic.volume = 0.5; 
-
-            // 在 iOS 上，需要將 AudioContext 預先載入 (雖然這裡是 simple Audio，但邏輯類似)
-            bgMusic.load();
-
-            const musicBtn = document.getElementById('music-btn');
-            musicBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // 防止同時觸發爆炸
-                toggleMusic();
-            });
-            // 觸控事件也綁定
-            musicBtn.addEventListener('touchstart', (e) => {
-                e.stopPropagation();
-                toggleMusic();
-            }, {passive: false});
-        }
-
-        function toggleMusic() {
-            if (!bgMusic) return;
-            if (bgMusic.paused) {
-                bgMusic.play().then(() => updateMusicUI(true)).catch(console.error);
-            } else {
-                bgMusic.pause();
-                updateMusicUI(false);
-            }
-        }
-
-        function updateMusicUI(isPlaying) {
-            const musicBtn = document.getElementById('music-btn');
-            const musicText = document.getElementById('music-text');
-            if (isPlaying) {
-                musicBtn.classList.add('playing');
-                musicText.innerText = "音樂播放中";
-                isMusicPlaying = true;
-            } else {
-                musicBtn.classList.remove('playing');
-                musicText.innerText = "音樂暫停";
-                isMusicPlaying = false;
-            }
-        }
-
         // --- 互動觸發 (整合 Touch 和 Click) ---
         function onCanvasTouchStart(e) {
-            // 如果是觸控事件，阻止預設行為 (例如雙擊縮放)
-            if(e.type === 'touchstart') {
-                // e.preventDefault(); // 視情況，這裡不阻止比較好，以免影響 UI 點擊
-            }
-
-            // 1. 播放音樂 (iOS 必須在 touchstart 內直接呼叫 play)
+            // 1. 播放音樂 (第一次互動時觸發)
             if (!hasUserInteracted && bgMusic) {
                 bgMusic.play().then(() => {
-                    updateMusicUI(true);
                     hasUserInteracted = true;
                 }).catch(err => {
-                    console.log("iOS 音訊解鎖失敗或靜音模式", err);
+                    console.log("Audio play failed (waiting for interaction)", err);
                 });
             }
 
@@ -364,7 +185,7 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             const fontSize = 60;
-            const fontFace = '-apple-system, Arial, sans-serif'; // iOS 字體優化
+            const fontFace = '-apple-system, Arial, sans-serif'; 
             
             ctx.font = `bold ${fontSize}px ${fontFace}`;
             const textWidth = ctx.measureText(message).width;
@@ -389,11 +210,10 @@
             });
             
             textSprite = new THREE.Sprite(spriteMaterial);
-            // 手機上文字稍微大一點
             const scale = 0.1; 
             textSprite.scale.set(canvas.width * scale, canvas.height * scale, 1);
             
-            textSprite.position.set(0, -18, 10); // 稍微更低一點
+            textSprite.position.set(0, -18, 10); 
             heartGroup.add(textSprite);
         }
 
@@ -447,7 +267,6 @@
         // --- 觸控移動 (iOS) ---
         function onTouchMove(event) {
             if (event.touches.length > 0) {
-                // event.preventDefault(); // 如果需要禁止頁面滾動請解開這行
                 const touch = event.touches[0];
                 mouseX = (touch.clientX / window.innerWidth) * 2 - 1;
                 mouseY = -(touch.clientY / window.innerHeight) * 2 + 1;
@@ -517,13 +336,12 @@
 
             if(heartGroup) {
                 heartGroup.rotation.y += 0.008;
-                // 視差移動：加入阻尼讓移動更平滑
                 heartGroup.position.x += (mouseX * 1.5 - heartGroup.position.x) * 0.1;
                 heartGroup.position.y += (mouseY * 1.5 - heartGroup.position.y) * 0.1;
             }
 
             if (textSprite && textSprite.material) {
-                const baseScale = 0.1 * textSprite.material.map.image.width; // iOS 上比例略大
+                const baseScale = 0.1 * textSprite.material.map.image.width;
                 let alpha = Math.max(0, (currentInteractionFactor - 0.5) * 2);
                 textSprite.material.opacity = alpha;
                 const targetScale = baseScale * (0.8 + alpha * 0.2); 
@@ -534,19 +352,6 @@
             renderer.render(scene, camera);
         }
 
-        function setupUI() {
-            document.getElementById('color-bottom').addEventListener('input', (e) => {
-                colorBottom.set(e.target.value);
-                updateParticleColors();
-            });
-            document.getElementById('color-top').addEventListener('input', (e) => {
-                colorTop.set(e.target.value);
-                updateParticleColors();
-            });
-            // 隱藏 fullscreen 按鈕，因為 iOS 不支援
-            document.getElementById('fullscreen-btn').style.display = 'none';
-        }
-
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -555,7 +360,6 @@
 
         window.onload = function() {
             initThree();
-            setupUI();
         };
 
     </script>
